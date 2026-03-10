@@ -1,0 +1,93 @@
+{
+  "Version": "2019-10-30",
+  "StartAction": "invokeLambda",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 40,
+      "y": 40
+    },
+    "ActionMetadata": {
+      "invokeLambda": {
+        "position": {
+          "x": 220,
+          "y": 120
+        }
+      },
+      "disconnect": {
+        "position": {
+          "x": 760,
+          "y": 120
+        }
+      },
+      "speakVanity": {
+        "position": {
+          "x": 500,
+          "y": 120
+        }
+      },
+      "speakError": {
+        "position": {
+          "x": 500,
+          "y": 240
+        }
+      }
+    },
+    "Annotations": [],
+    "name": "Vanity Number Flow"
+  },
+  "Actions": [
+    {
+      "Identifier": "invokeLambda",
+      "Type": "InvokeLambdaFunction",
+      "Parameters": {
+        "LambdaFunctionARN": "${lambda_arn}",
+        "InvocationTimeLimitSeconds": "8",
+        "InvocationType": "SYNCHRONOUS",
+        "ResponseValidation": {
+          "ResponseType": "JSON"
+        }
+      },
+      "Transitions": {
+        "NextAction": "speakVanity",
+        "Errors": [
+          {
+            "ErrorType": "NoMatchingError",
+            "NextAction": "speakError"
+          }
+        ]
+      }
+    },
+    {
+      "Identifier": "speakVanity",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Top vanity options are $.External.topOne, $.External.topTwo, and $.External.topThree"
+      },
+      "Transitions": {
+        "NextAction": "disconnect",
+        "Errors": [
+          {
+            "ErrorType": "NoMatchingError",
+            "NextAction": "speakError"
+          }
+        ]
+      }
+    },
+    {
+      "Identifier": "speakError",
+      "Type": "MessageParticipant",
+      "Parameters": {
+        "Text": "Sorry, we could not generate vanity options right now."
+      },
+      "Transitions": {
+        "NextAction": "disconnect"
+      }
+    },
+    {
+      "Identifier": "disconnect",
+      "Type": "DisconnectParticipant",
+      "Parameters": {},
+      "Transitions": {}
+    }
+  ]
+}

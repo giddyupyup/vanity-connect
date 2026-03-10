@@ -1,0 +1,16 @@
+node_modules
+services/*/dist
+apps/*/dist
+infra/stacks/connect-vanity/.terraform
+infra/stacks/connect-vanity/.terraform.lock.hcl
+infra/stacks/connect-vanity/*.tfstate
+infra/stacks/connect-vanity/*.tfstate.backup
+infra/stacks/lambda-services/.terraform
+infra/stacks/lambda-services/.terraform.lock.hcl
+infra/stacks/lambda-services/*.tfstate
+infra/stacks/lambda-services/*.tfstate.backup
+infra/stacks/web-hosting/.terraform
+infra/stacks/web-hosting/.terraform.lock.hcl
+infra/stacks/web-hosting/*.tfstate
+infra/stacks/web-hosting/*.tfstate.backup
+terraform.tfvars

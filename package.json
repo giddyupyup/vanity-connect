@@ -1,0 +1,17 @@
+{
+  "name": "connect-vanity-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "services/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
+}

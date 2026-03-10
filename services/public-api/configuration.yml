@@ -1,0 +1,25 @@
+service:
+  name: vanity-last-callers-api
+  runtime: nodejs20.x
+  handler: src/handler.main
+  timeout: 10
+  memory_size: 256
+  log_retention_days: 14
+  source_dir: dist/src
+  environment:
+    TABLE_NAME: ${DYNAMODB_TABLE_NAME}
+  role:
+    create: true
+    name: vanity-last-callers-api-role
+    policy_name: vanity-last-callers-api-policy
+    statements:
+      - effect: Allow
+        actions:
+          - dynamodb:Query
+        resources:
+          - ${DYNAMODB_TABLE_ARN}
+
+trigger:
+  type: api-gw
+  method: GET
+  path: /callers

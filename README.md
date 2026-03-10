@@ -142,6 +142,8 @@ echo "https://$(terraform output -raw web_app_cloudfront_domain_name)"
 
 8. Assign the created contact flow to your Connect phone number, then test by calling.
 
+Test dial-in number used in this setup: `+1 833-877-7411`.
+
 ## Architecture
 
 ```mermaid
@@ -160,5 +162,6 @@ flowchart TD
 ## Notes
 
 - Connect instance and phone number are expected to already exist in your account.
+- Test dial-in number for this implementation: `+1 833-877-7411`.
 - `connect-vanity` creates DynamoDB and shared API Gateway.
 - `lambda-services` manages Lambda deploy + triggers + Connect flow + logs + IAM (from `configuration.yml`).

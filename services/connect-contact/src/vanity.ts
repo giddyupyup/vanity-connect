@@ -58,31 +58,47 @@ function fallbackLettersForDigit(digit: string): string {
   return letters[0];
 }
 
-export function normalizePhoneNumber(input: string): string {
-  const digits = input.replace(/\D/g, "");
+function parsePhoneNumber(input: string): { countryCode: string; tenDigits: string } {
+  const trimmed = input.trim();
+  const digits = trimmed.replace(/\D/g, "");
+
+  if (digits.length === 0) {
+    return { countryCode: "1", tenDigits: "" };
+  }
+
+  if (trimmed.startsWith("+") && digits.length > 10) {
+    return {
+      countryCode: digits.slice(0, digits.length - 10),
+      tenDigits: digits.slice(-10)
+    };
+  }
 
   if (digits.length === 11 && digits.startsWith("1")) {
-    return digits.slice(1);
+    return { countryCode: "1", tenDigits: digits.slice(1) };
   }
 
   if (digits.length >= 10) {
-    return digits.slice(-10);
+    return { countryCode: "1", tenDigits: digits.slice(-10) };
   }
 
-  return digits;
+  return { countryCode: "1", tenDigits: digits };
 }
 
-function formatUsNumber(tenDigits: string): string {
+export function normalizePhoneNumber(input: string): string {
+  return parsePhoneNumber(input).tenDigits;
+}
+
+function formatPhoneNumber(countryCode: string, tenDigits: string): string {
   const area = tenDigits.slice(0, 3);
   const local = tenDigits.slice(3);
 
   if (/[A-Z]/.test(local)) {
-    return `+1-${area}-${local}`;
+    return `+${countryCode}-${area}-${local}`;
   }
 
   const exchange = local.slice(0, 3);
   const subscriber = local.slice(3);
-  return `+1-${area}-${exchange}-${subscriber}`;
+  return `+${countryCode}-${area}-${exchange}-${subscriber}`;
 }
 
 function scoreCandidate(local7: string): number {
@@ -92,12 +108,12 @@ function scoreCandidate(local7: string): number {
 }
 
 export function generateVanityNumbers(phoneNumber: string, limit = 5): string[] {
-  const normalized = normalizePhoneNumber(phoneNumber);
-  if (normalized.length !== 10) {
+  const parsed = parsePhoneNumber(phoneNumber);
+  if (parsed.tenDigits.length !== 10) {
     return [];
   }
 
-  const local7 = normalized.slice(3);
+  const local7 = parsed.tenDigits.slice(3);
   const candidates = new Set<string>();
 
   for (const word of WORD_DICTIONARY) {
@@ -124,5 +140,5 @@ export function generateVanityNumbers(phoneNumber: string, limit = 5): string[] 
   return [...candidates]
     .sort((a, b) => scoreCandidate(b) - scoreCandidate(a))
     .slice(0, limit)
-    .map((local) => formatUsNumber(normalized.slice(0, 3) + local));
+    .map((local) => formatPhoneNumber(parsed.countryCode, parsed.tenDigits.slice(0, 3) + local));
 }

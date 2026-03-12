@@ -15,3 +15,9 @@ test("generateVanityNumbers respects requested limit", () => {
   const candidates = generateVanityNumbers("8005551234", 3);
   assert.ok(candidates.length <= 3);
 });
+
+test("generateVanityNumbers preserves country code for E.164 inputs", () => {
+  const candidates = generateVanityNumbers("+639171773036");
+  assert.ok(candidates.length > 0);
+  assert.ok(candidates.every((value) => value.startsWith("+63-")));
+});
